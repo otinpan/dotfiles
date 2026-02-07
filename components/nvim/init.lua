@@ -1,7 +1,22 @@
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 --init.lua
 -- ensure the `lua` directory is included to package.path
 package.path = "./lua/?.lua;" .. package.path
 local util = require("utils")
+
+-- Filter a noisy nvim-lspconfig deprecation notice (Nvim 0.10 and older).
+do
+    local orig_notify = vim.notify
+    vim.notify = function(msg, ...)
+        if type(msg) == "string"
+            and msg:match("nvim%-lspconfig support for Nvim 0%.10 or older is deprecated") then
+            return
+        end
+        return orig_notify(msg, ...)
+    end
+end
 -- ------------------------------------------------------------
 --  key BIND
 -- ------------------------------------------------------------
@@ -65,6 +80,8 @@ local options = {
     pumheight = 10,
     termguicolors = true,
     cursorline = true,
+    timeout = true,
+    timeoutlen = 500,
 }
 vim.opt.shortmess:append("c")
 for k, v in pairs(options) do
@@ -115,7 +132,7 @@ end
 
 vim.cmd([[
 try
-  colorscheme iceberg
+  colorscheme vscode
 catch /^Vim\%((\a\+)\)\=:E185/
   colorscheme default
   set background=dark

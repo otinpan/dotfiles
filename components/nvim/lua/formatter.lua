@@ -24,6 +24,15 @@ end
 -- Get installed tools
 local mason_tools = get_mason_tools()
 
+-- Ensure cpplint is available for C/C++ linting.
+do
+  local name = "cpplint"
+  local ok, pkg = pcall(mason_registry.get_package, name)
+  if ok and not pkg:is_installed() then
+    pkg:install()
+  end
+end
+
 -- Set up nvim-lint
 nvim_lint.linters_by_ft = {}
 
@@ -37,6 +46,14 @@ for _, linter in ipairs(mason_tools["linter"] or {}) do
       table.insert(nvim_lint.linters_by_ft[ft], linter)
     end
   end
+end
+
+-- Fallback: make sure cpplint runs for C/C++ even if registry categories differ.
+if nvim_lint.linters.cpplint then
+  nvim_lint.linters_by_ft.c = nvim_lint.linters_by_ft.c or {}
+  table.insert(nvim_lint.linters_by_ft.c, "cpplint")
+  nvim_lint.linters_by_ft.cpp = nvim_lint.linters_by_ft.cpp or {}
+  table.insert(nvim_lint.linters_by_ft.cpp, "cpplint")
 end
 
 -- Set up conform.nvim

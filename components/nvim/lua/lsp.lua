@@ -130,6 +130,7 @@ local servers = {
   clangd = {
     offset_encoding = 'utf-8'
   },
+  tsserver = {},
   rust_analyzer = {},
   lua_ls = {
     Lua = {
@@ -153,10 +154,32 @@ local servers = {
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 require("mason-lspconfig").setup {
   ensure_installed = vim.tbl_keys(servers),
+  -- Avoid vim.lsp.enable() (requires Nvim 0.11+)
+  automatic_enable = false,
 }
-vim.lsp.config('*', {
-  capabilities = capabilities,
-})
+
+local lspconfig = require("lspconfig")
+
+local mason_lspconfig = require("mason-lspconfig")
+if mason_lspconfig.setup_handlers then
+  mason_lspconfig.setup_handlers({
+    function(server_name)
+      lspconfig[server_name].setup({
+        capabilities = capabilities,
+        settings = servers[server_name],
+      })
+    end,
+  })
+else
+  -- Fallback for older mason-lspconfig
+  for server_name, _ in pairs(servers) do
+    lspconfig[server_name].setup({
+      capabilities = capabilities,
+      settings = servers[server_name],
+    })
+  end
+end
+
 -- LSP handlers
 vim.lsp.handlers["textDocument/publishDiagnostics"] =
     vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false })

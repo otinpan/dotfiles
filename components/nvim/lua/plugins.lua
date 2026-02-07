@@ -37,11 +37,30 @@ packer.startup(function()
 
   -- Colorschemes
   use({ "cocopon/iceberg.vim" }) -- Color scheme
+  use({
+    "Mofiqul/vscode.nvim",
+    config = function()
+      require("vscode").setup({
+        style = "dark",
+        transparent = false,
+        italic_comments = true,
+        disable_nvimtree_bg = true,
+      })
+    end
+  })
 
   -- Status Line
   use({
     "nvim-lualine/lualine.nvim",
-    run = util.safe_require("lualine", {})
+    config = function()
+      require("lualine").setup({
+        options = {
+          theme = "vscode",
+          section_separators = "",
+          component_separators = "",
+        }
+      })
+    end
   }) -- Statusline
   use({
     "windwp/nvim-autopairs",
@@ -62,10 +81,22 @@ packer.startup(function()
   -- Snippets
   use({ "hrsh7th/vim-vsnip" }) --snippet engine
 
+  -- Keymap helper
+  use({
+    "folke/which-key.nvim",
+    config = function()
+      require("which-key").setup({})
+    end
+  })
+
   -- LSP
   use({ "neovim/nvim-lspconfig" })             -- enable LSP
-  use({ "williamboman/mason.nvim" })           -- simple to use language server installer
-  use({ "williamboman/mason-lspconfig.nvim" }) -- bridge between mason and nvim-lspconfig
+  use({ 
+    "williamboman/mason.nvim" 
+  })           -- simple to use language server installer
+  use({ 
+    "williamboman/mason-lspconfig.nvim"
+  }) -- bridge between mason and nvim-lspconfig
   -- use{ "glepnir/lspsaga.nvim", run = require("lspsaga").setup() } -- LSP UIs
 
   -- Linter & Formatter
@@ -181,7 +212,7 @@ packer.startup(function()
 
   -- Navigation
   use({
-    "ggandor/leap.nvim",
+    url = "https://codeberg.org/andyg/leap.nvim",
     config = function()
       -- require("leap").create_default_mappings()
       vim.keymap.set({ "n", "x", "o" }, "s",  "<Plug>(leap-forward)")
