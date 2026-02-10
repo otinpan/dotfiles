@@ -152,6 +152,11 @@ local servers = {
   }
 }
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local function on_attach(client, bufnr)
+  if client.server_capabilities and client.server_capabilities.semanticTokensProvider then
+    pcall(vim.lsp.semantic_tokens.start, bufnr, client.id)
+  end
+end
 require("mason-lspconfig").setup {
   ensure_installed = vim.tbl_keys(servers),
   -- Avoid vim.lsp.enable() (requires Nvim 0.11+)
@@ -166,6 +171,7 @@ if mason_lspconfig.setup_handlers then
     function(server_name)
       lspconfig[server_name].setup({
         capabilities = capabilities,
+        on_attach = on_attach,
         settings = servers[server_name],
       })
     end,
@@ -175,6 +181,7 @@ else
   for server_name, _ in pairs(servers) do
     lspconfig[server_name].setup({
       capabilities = capabilities,
+      on_attach = on_attach,
       settings = servers[server_name],
     })
   end

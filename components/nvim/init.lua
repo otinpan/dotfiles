@@ -52,7 +52,7 @@ local options = {
     title = true,
     backup = false, --or you can set backupdir where backup files are saved
     swapfile = false,
-    shell = "zsh",
+    shell = "bash",
     backupskip = { "/tmp/*" },
     clipboard = "unnamedplus", -- copy yank on clipboard
     number = true, -- don't show line numbers
@@ -82,6 +82,7 @@ local options = {
     cursorline = true,
     timeout = true,
     timeoutlen = 500,
+    signcolumn = "yes", -- keep sign column visible so marks are always shown
 }
 vim.opt.shortmess:append("c")
 for k, v in pairs(options) do
@@ -130,14 +131,43 @@ end
 -- visual
 -- ------------------------------------------------------------
 
+local function apply_transparent_bg()
+    local groups = {
+        "Normal",
+        "NormalNC",
+        "NormalFloat",
+        "FloatBorder",
+        "SignColumn",
+        "EndOfBuffer",
+        "LineNr",
+        "CursorLine",
+        "CursorLineNr",
+        "StatusLine",
+        "StatusLineNC",
+        "Pmenu",
+        "PmenuSel",
+        "PmenuSbar",
+        "PmenuThumb",
+    }
+    for _, name in ipairs(groups) do
+        vim.api.nvim_set_hl(0, name, { bg = "none", ctermbg = "none" })
+    end
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+    group = vim.api.nvim_create_augroup("TransparentBackground", { clear = true }),
+    callback = apply_transparent_bg,
+})
+
 vim.cmd([[
 try
-  colorscheme vscode
+  colorscheme catppuccin
 catch /^Vim\%((\a\+)\)\=:E185/
   colorscheme default
   set background=dark
 endtry
 ]])
+apply_transparent_bg()
 
 if not pcall(require, "plugins") then
     print("Loading plugins.lua failed")
