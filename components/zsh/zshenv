@@ -7,4 +7,4 @@ typeset -TU XDG_DATA_DIRS data_dirs \
   && data_dirs+=($XDG_DATA_HOME) \
   && data_dirs+=(/usr/share)
 . "$HOME/.cargo/env"
-PATH=$HOME/.local/nvim-linux64/bin:$PATH
+PATH=$HOME/.local/nvim-linux-x86_64/bin:$PATH

@@ -159,14 +159,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     callback = apply_transparent_bg,
 })
 
-vim.cmd([[
-try
-  colorscheme catppuccin
-catch /^Vim\%((\a\+)\)\=:E185/
-  colorscheme default
-  set background=dark
-endtry
-]])
 apply_transparent_bg()
 
 if not pcall(require, "plugins") then

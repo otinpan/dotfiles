@@ -1,4 +1,4 @@
-path+=($HOME/.local/nvim-linux64/bin)
+path+=($HOME/.local/nvim-linux-x86_64/bin)
 if (type nvim &> /dev/null);then
     alias vim='nvim'
     alias n='nvim'

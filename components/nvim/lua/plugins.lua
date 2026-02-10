@@ -22,6 +22,8 @@ require("lazy").setup({
   {
     "catppuccin/nvim",
     name = "catppuccin",
+    lazy = false,
+    priority = 1000,
     config = function()
       require("catppuccin").setup({
         flavour = "mocha",
@@ -34,6 +36,7 @@ require("lazy").setup({
           telescope = true,
         },
       })
+      vim.cmd.colorscheme("catppuccin")
     end,
   },
 
@@ -159,8 +162,15 @@ require("lazy").setup({
       local ok, treesitter = pcall(require, "nvim-treesitter.configs")
       if ok then
         treesitter.setup({
+          ensure_installed = {
+            "typescript",
+            "tsx",
+            "javascript",
+            "json",
+          },
+          auto_install = true,
           highlight = {
-            enabled = true,
+            enable = true,
             disable = {
               "lua",
               "toml",
@@ -168,8 +178,15 @@ require("lazy").setup({
             },
           },
           indent = {
-            enabled = true,
+            enable = true,
           },
+        })
+        vim.api.nvim_create_autocmd("FileType", {
+          group = vim.api.nvim_create_augroup("TS_FORCE_HIGHLIGHT", { clear = true }),
+          pattern = { "typescript", "typescriptreact", "tsx" },
+          callback = function()
+            pcall(vim.treesitter.start)
+          end,
         })
         vim.api.nvim_create_autocmd({ "BufEnter", "BufAdd", "BufNew", "BufNewFile", "BufWinEnter" }, {
           group = vim.api.nvim_create_augroup("TS_FOLD_WORKAROUND", {}),
